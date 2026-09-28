@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#0D2B5E"><title>CASS – Schedario</title>
+<style>
+:root{--navy:#0D2B5E;--navy2:#1A3A6E;--teal:#028090;--teal2:#00A896;--gold:#F5C518;--bg:#F0F4F8;--card:#fff;--border:#D0D8E4;--text:#1A2B3C;--mid:#3A5070;--light:#6B85A0;--green:#198754;--gbg:#D1E7DD;--yellow:#9C5700;--ybg:#FFF3CD;--orange:#7B3F00;--obg:#FFE5CC;--red:#842029;--rbg:#F8D7DA;--r:10px;--sh:0 2px 14px rgba(13,43,94,.09);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,var(--navy) 0%,#1c4f88 100%);padding:20px;}
+.login-card{background:#fff;border-radius:18px;padding:40px 36px;width:100%;max-width:370px;box-shadow:0 24px 64px rgba(0,0,0,.28);}
+.login-logo{text-align:center;margin-bottom:26px;}
+.lbadge{background:var(--navy);display:inline-block;border-radius:11px;padding:11px 24px;}
+.lbadge strong{color:#fff;font-size:22px;display:block;}
+.lbadge small{color:rgba(255,255,255,.55);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;display:block;margin-top:1px;}
+.login-title{font-size:19px;font-weight:700;color:var(--navy);text-align:center;margin-bottom:4px;}
+.login-sub{color:var(--light);font-size:12.5px;text-align:center;margin-bottom:26px;}
+.lerr{background:#F8D7DA;color:#842029;border-radius:8px;padding:10px 14px;font-size:12.5px;margin-bottom:14px;display:none;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--mid);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px;}
+.field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;outline:none;}
+.field input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(2,128,144,.11);}
+.btn-primary{width:100%;background:var(--navy);color:#fff;border:none;padding:13px;border-radius:9px;font-size:15px;font-weight:700;cursor:pointer;}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+.lhint{color:var(--light);font-size:11px;text-align:center;margin-top:16px;}
+.app{display:none;}
+.nav{background:var(--navy);padding:0 22px;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,.25);}
+.nav-brand{display:flex;align-items:center;gap:11px;}
+.nav-logo{background:var(--teal);border-radius:7px;padding:4px 11px;font-weight:800;font-size:15px;color:#fff;}
+.nav-title{color:#fff;font-size:14px;font-weight:600;}
+.nav-sub{color:rgba(255,255,255,.45);font-size:10px;}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.nav-user{color:rgba(255,255,255,.75);font-size:12px;}
+.btn-xs{background:rgba(255,255,255,.12);border:none;color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;}
+.tabs{background:var(--navy2);display:flex;padding:0 22px;overflow-x:auto;}
+.tab{padding:12px 22px;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;}
+.tab.on{color:#fff;border-bottom-color:var(--gold);}
+.main{padding:20px;max-width:1400px;margin:0 auto;}
+.section{display:none;}.section.on{display:block;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--card);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);display:flex;align-items:center;gap:12px;}
+.sico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sval{font-size:24px;font-weight:800;line-height:1;}
+.slbl{font-size:10.5px;color:var(--light);margin-top:3px;}
+.toolbar{background:var(--card);border-radius:var(--r);padding:14px 18px;box-shadow:var(--sh);margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sw{flex:1;min-width:180px;position:relative;}
+.sw input{width:100%;padding:8px 12px 8px 34px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;}
+.sico2{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--light);font-size:15px;pointer-events:none;}
+.fbtns{display:flex;gap:5px;flex-wrap:wrap;}
+.fbtn{padding:7px 12px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:var(--mid);}
+.fbtn.on,.fbtn:hover{border-color:var(--teal);color:var(--teal);background:rgba(2,128,144,.06);}
+.btn-t{background:var(--teal);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-n{background:var(--navy);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.btn-confirm{background:linear-gradient(135deg,var(--green),#25a865);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.btn-confirm:disabled{opacity:.6;cursor:not-allowed;}
+.twrap{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;}
+.tscr{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead th{background:var(--navy);color:#fff;padding:12px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);}
+tbody tr:hover{background:rgba(2,128,144,.04);}
+tbody td{padding:11px 13px;vertical-align:middle;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;}
+.bg{background:var(--gbg);color:var(--green);}
+.by{background:var(--ybg);color:var(--yellow);}
+.bo{background:var(--obg);color:var(--orange);}
+.br{background:var(--rbg);color:var(--red);}
+.badge-tipo{background:#EBF0FA;color:var(--navy);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;}
+.act{background:none;border:none;cursor:pointer;padding:4px 7px;border-radius:5px;font-size:14px;}
+.act:hover{background:var(--bg);}
+.empty{text-align:center;padding:50px 20px;color:var(--light);}
+.empty .ei{font-size:40px;margin-bottom:10px;}
+.tloading{text-align:center;padding:40px;color:var(--light);font-size:13px;}
+.mbg{position:fixed;inset:0;background:rgba(10,25,50,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:.18s;}
+.mbg.open{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.22);transform:scale(.96);transition:.18s;}
+.mbg.open .modal{transform:scale(1);}
+.mhead{background:var(--navy);color:#fff;padding:18px 22px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;}
+.mtit{font-size:15px;font-weight:700;}
+.mcls{background:rgba(255,255,255,.15);border:none;color:#fff;width:26px;height:26px;border-radius:5px;cursor:pointer;font-size:15px;}
+.mbody{padding:22px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fgrid .full{grid-column:1/-1;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg label{font-size:10.5px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;}
+.fg input,.fg select,.fg textarea{padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;outline:none;color:var(--text);background:#fff;font-family:inherit;}
+.fg input:focus,.fg select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(2,128,144,.09);}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.btn-cancel{background:var(--bg);border:1.5px solid var(--border);color:var(--mid);padding:9px 18px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:600;}
+.btn-save{background:var(--teal);color:#fff;border:none;padding:9px 22px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:700;}
+.btn-save:disabled{opacity:.6;cursor:not-allowed;}
+.drop{border:2px dashed var(--border);border-radius:9px;padding:28px;text-align:center;color:var(--light);cursor:pointer;}
+.drop:hover,.drop.over{border-color:var(--teal);background:rgba(2,128,144,.04);color:var(--teal);}
+.med-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+.med-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:18px;border-top:4px solid var(--teal);position:relative;}
+.med-name{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.med-row{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--mid);margin-bottom:5px;}
+.med-actions{position:absolute;top:12px;right:12px;display:flex;gap:4px;}
+.nfb{position:fixed;bottom:18px;right:18px;z-index:300;display:flex;flex-direction:column;gap:9px;max-width:340px;}
+.nf{background:#fff;border-radius:9px;padding:13px 14px;box-shadow:0 4px 20px rgba(0,0,0,.14);border-left:4px solid;display:flex;gap:10px;align-items:flex-start;animation:sIn .25s ease;}
+.nf.warn{border-color:#FFC107;}.nf.dng{border-color:#DC3545;}
+.nft strong{display:block;font-size:12.5px;color:var(--text);}
+.nft span{font-size:11.5px;color:var(--mid);}
+.nfc{background:none;border:none;color:var(--light);cursor:pointer;font-size:15px;margin-left:auto;padding:0 0 0 6px;}
+@keyframes sIn{from{transform:translateX(110%);opacity:0}to{transform:translateX(0);opacity:1}}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .6s linear infinite;vertical-align:middle;margin-right:5px;}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:900px){.stats{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr;}.fgrid{grid-template-columns:1fr;}.fgrid .full{grid-column:1;}.main{padding:12px;}}
+@media(max-width:480px){.stats{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="login-logo"><div class="lbadge"><strong>CASS</strong><small>S.A.L.P.A.S.</small></div></div>
+    <div class="login-title">Schedario</div>
+    <p class="login-sub">Accedi con le tue credenziali operative</p>
+    <div class="lerr" id="lerr">Credenziali non valide. Riprova.</div>
+    <div class="field"><label>Operatore</label><input id="lu" type="text" placeholder="es. admin"></div>
+    <div class="field"><label>Password</label><input id="lp" type="password" placeholder="••••••••"></div>
+    <button class="btn-primary" id="lbtn" onclick="doLogin()">Accedi →</button>
+    <p class="lhint">💡 Demo: <strong>admin</strong> / <strong>cass2025</strong></p>
+  </div>
+</div>
+
+<div class="app" id="appWrap">
+  <nav class="nav">
+    <div class="nav-brand">
+      <div class="nav-logo">CASS</div>
+      <div><div class="nav-title">Schedario</div><div class="nav-sub">S.A.L.P.A.S.</div></div>
+    </div>
+    <div class="nav-r"><span class="nav-user" id="navUser"></span><button class="btn-xs" onclick="doLogout()">Esci</button></div>
+  </nav>
+  <div class="tabs">
+    <div class="tab on" onclick="switchTab('associati',this)">👥 Associati</div>
+    <div class="tab"    onclick="switchTab('iscrizioni',this)">📋 Iscrizioni</div>
+    <div class="tab"    onclick="switchTab('medici',this)">🩺 Medici di Base</div>
+  </div>
+
+  <div class="main">
+    <div class="section on" id="sec-associati">
+      <div class="stats">
+        <div class="stat"><div class="sico" style="background:#EBF0FA;">👥</div><div><div class="sval" id="sT" style="color:var(--navy)">—</div><div class="slbl">Totali</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--gbg);">✅</div><div><div class="sval" id="sG" style="color:var(--green)">—</div><div class="slbl">In ordine</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--ybg);">⚠️</div><div><div class="sval" id="sY" style="color:var(--yellow)">—</div><div class="slbl">≤45 gg</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--obg);">🟠</div><div><div class="sval" id="sO" style="color:var(--orange)">—</div><div class="slbl">≤60 gg</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--rbg);">🚨</div><div><div class="sval" id="sR" style="color:var(--red)">—</div><div class="slbl">Scadute</div></div></div>
+      </div>
+      <div class="toolbar">
+        <div class="sw"><span class="sico2">🔍</span><input type="text" id="search-ass" placeholder="Cerca…" oninput="renderAss()"></div>
+        <div class="fbtns">
+          <button class="fbtn on" onclick="setF('all',this)">Tutti</button>
+          <button class="fbtn" onclick="setF('green',this)">🟢 OK</button>
+          <button class="fbtn" onclick="setF('yellow',this)">🟡 45gg</button>
+          <button class="fbtn" onclick="setF('orange',this)">🟠 60gg</button>
+          <button class="fbtn" onclick="setF('red',this)">🔴 Scaduti</button>
+        </div>
+        <button class="btn-n" onclick="openImport()">📂 Importa Excel</button>
+        <button class="btn-t" onclick="openAssModal()">+ Nuovo associato</button>
+      </div>
+      <div class="twrap"><div class="tscr"><table>
+        <thead><tr><th>Stato</th><th>Tessera</th><th>Nome</th><th>Cognome</th><th>CF</th><th>Telefono</th><th>ASL</th><th>Medico</th><th>Scadenza</th><th>Azioni</th></tr></thead>
+        <tbody id="tbody-ass"></tbody>
+      </table></div>
+      <div class="empty" id="empty-ass" style="display:none;"><div class="ei">📋</div><p>Nessun associato trovato.</p></div>
+      <div class="tloading" id="tload-ass">⏳ Caricamento…</div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-iscrizioni">
+      <div class="stats">
+        <div class="stat"><div class="sico" style="background:#EBF0FA;">📋</div><div><div class="sval" id="iT" style="color:var(--navy)">—</div><div class="slbl">Totali</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--ybg);">⏳</div><div><div class="sval" id="iP" style="color:var(--yellow)">—</div><div class="slbl">In attesa pagamento</div></div></div>
+        <div class="stat"><div class="sico" style="background:var(--gbg);">✅</div><div><div class="sval" id="iC" style="color:var(--green)">—</div><div class="slbl">Confermate</div></div></div>
+      </div>
+      <div class="toolbar">
+        <div class="sw"><span class="sico2">🔍</span><input type="text" id="search-isc" placeholder="Cerca…" oninput="renderIsc()"></div>
+        <div class="fbtns">
+          <button class="fbtn on" onclick="setIF('all',this)">Tutte</button>
+          <button class="fbtn" onclick="setIF('pending',this)">⏳ In attesa</button>
+          <button class="fbtn" onclick="setIF('confirmed',this)">✅ Confermate</button>
+        </div>
+        <button class="btn-t" onclick="openIscModal()">+ Nuova iscrizione</button>
+      </div>
+      <div class="twrap"><div class="tscr"><table>
+        <thead><tr><th>Stato</th><th>Tipo</th><th>Tessera</th><th>Cognome</th><th>Nome</th><th>Email</th><th>Telefono</th><th>Tariffa</th><th>Azioni</th></tr></thead>
+        <tbody id="tbody-isc"></tbody>
+      </table></div>
+      <div class="empty" id="empty-isc" style="display:none;"><div class="ei">📋</div><p>Nessuna iscrizione registrata.</p></div>
+      <div class="tloading" id="tload-isc">⏳ Caricamento…</div>
+      </div>
+    </div>
+
+    <div class="section" id="sec-medici">
+      <div class="toolbar">
+        <div class="sw"><span class="sico2">🔍</span><input type="text" id="search-med" placeholder="Cerca medico…" oninput="renderMed()"></div>
+        <button class="btn-t" onclick="openMedModal()">+ Nuovo medico</button>
+      </div>
+      <div class="med-grid" id="med-grid"></div>
+      <div class="empty" id="empty-med" style="display:none;"><div class="ei">🩺</div><p>Nessun medico inserito.</p></div>
+      <div class="tloading" id="tload-med">⏳ Caricamento…</div>
+    </div>
+  </div>
+</div>
+
+<div class="mbg" id="mbg-ass"><div class="modal">
+  <div class="mhead"><span class="mtit" id="mtit-ass">Nuovo associato</span><button class="mcls" onclick="closeAssModal()">✕</button></div>
+  <div class="mbody"><div class="fgrid">
+    <div class="fg"><label>Nome *</label><input id="fNome" placeholder="Mario"></div>
+    <div class="fg"><label>Cognome *</label><input id="fCognome" placeholder="Rossi"></div>
+    <div class="fg"><label>Codice Fiscale</label><input id="fCF" style="text-transform:uppercase"></div>
+    <div class="fg"><label>N° Tessera</label><input id="fTessera"></div>
+    <div class="fg"><label>Data iscrizione</label><input id="fIsc" type="date"></div>
+    <div class="fg"><label>Scadenza pratica</label><input id="fScad" type="date"></div>
+    <div class="fg"><label>Telefono</label><input id="fTel" type="tel"></div>
+    <div class="fg"><label>Email</label><input id="fMail" type="email"></div>
+    <div class="fg full"><label>Indirizzo</label><input id="fInd"></div>
+    <div class="fg"><label>ASL</label><input id="fASL"></div>
+    <div class="fg"><label>Medico di base</label><input id="fMed"></div>
+    <div class="fg full"><label>Note</label><input id="fNote"></div>
+  </div></div>
+  <div class="mfoot"><button class="btn-cancel" onclick="closeAssModal()">Annulla</button><button class="btn-save" id="saveAssBtn" onclick="saveAss()">Salva</button></div>
+</div></div>
+
+<div class="mbg" id="mbg-isc"><div class="modal">
+  <div class="mhead"><span class="mtit">Nuova iscrizione (manuale)</span><button class="mcls" onclick="closeIscModal()">✕</button></div>
+  <div class="mbody"><div class="fgrid">
+    <div class="fg full"><label>Tipo di iscrizione *</label>
+      <select id="iTipo" onchange="updateTariffaPreview()">
+        <option value="">— Seleziona —</option>
+        <option value="Tessera Esterno">Tessera Esterno — € 25</option>
+        <option value="Tessera Esterno Minore">Tessera Esterno Minore — € 20</option>
+        <option value="Tessera Iscritto Sindacato">Tessera Iscritto Sindacato — € 20</option>
+        <option value="Familiari Iscritti Sindacato">Familiari Iscritti Sindacato — € 20</option>
+        <option value="Minori Iscritti Sindacato">Minori Iscritti Sindacato — € 15</option>
+        <option value="Pensionati Esterno">Pensionati Esterno — € 20</option>
+        <option value="Pensionato Iscritto Sindacato">Pensionato Iscritto Sindacato — € 15</option>
+        <option value="Pacchetto Famiglia (4+ persone)">Pacchetto Famiglia (4+ persone) — € 50</option>
+      </select>
+    </div>
+    <div class="fg"><label>Cognome *</label><input id="iCognome"></div>
+    <div class="fg"><label>Nome *</label><input id="iNome"></div>
+    <div class="fg"><label>Data di nascita</label><input id="iNascita" type="date"></div>
+    <div class="fg"><label>Codice Fiscale</label><input id="iCF" style="text-transform:uppercase"></div>
+    <div class="fg"><label>Email</label><input id="iEmail" type="email"></div>
+    <div class="fg"><label>Telefono</label><input id="iTel" type="tel"></div>
+    <div class="fg full"><label>Indirizzo</label><input id="iIndirizzo"></div>
+    <div class="fg"><label>Tariffa (€)</label><input id="iTariffa" type="number" step="0.01" readonly style="background:#f0f0f0;"></div>
+    <div class="fg"><label>Modalità pagamento</label>
+      <select id="iPagamento"><option value="">—</option><option>Contanti</option><option>Bonifico bancario</option><option>Carta</option></select>
+    </div>
+    <div class="fg full"><label>Note</label><input id="iNote"></div>
+  </div></div>
+  <div class="mfoot"><button class="btn-cancel" onclick="closeIscModal()">Annulla</button><button class="btn-save" id="saveIscBtn" onclick="saveIsc()">Salva (già confermata)</button></div>
+</div></div>
+
+<div class="mbg" id="mbg-med"><div class="modal">
+  <div class="mhead"><span class="mtit" id="mtit-med">Nuovo medico di base</span><button class="mcls" onclick="closeMedModal()">✕</button></div>
+  <div class="mbody"><div class="fgrid">
+    <div class="fg"><label>Nome *</label><input id="mNome"></div>
+    <div class="fg"><label>Cognome *</label><input id="mCognome"></div>
+    <div class="fg"><label>Email</label><input id="mEmail" type="email"></div>
+    <div class="fg"><label>Cellulare</label><input id="mCell" type="tel"></div>
+    <div class="fg"><label>Telefono studio</label><input id="mTel" type="tel"></div>
+    <div class="fg full"><label>Indirizzo studio</label><input id="mInd"></div>
+    <div class="fg full"><label>Orari ricevimento</label><textarea id="mOrari" rows="3"></textarea></div>
+  </div></div>
+  <div class="mfoot"><button class="btn-cancel" onclick="closeMedModal()">Annulla</button><button class="btn-save" id="saveMedBtn" onclick="saveMed()">Salva</button></div>
+</div></div>
+
+<div class="mbg" id="ibg"><div class="modal" style="max-width:460px;">
+  <div class="mhead"><span class="mtit">Importa da Excel / CSV</span><button class="mcls" onclick="closeImport()">✕</button></div>
+  <div class="mbody">
+    <div class="drop" id="drop" onclick="document.getElementById('fi').click()"><div style="font-size:30px;">📂</div><p><strong>Clicca o trascina</strong> il file</p></div>
+    <input type="file" id="fi" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFile(this.files[0])">
+    <div id="iprev" style="margin-top:14px;font-size:13px;color:var(--mid);"></div>
+  </div>
+  <div class="mfoot"><button class="btn-cancel" onclick="closeImport()">Chiudi</button></div>
+</div></div>
+
+<div class="nfb" id="nfb"></div>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script>
+const GG=45, GG2=60;
+let assR=[],medR=[],iscR=[],assF='all',iscF='all',assEid=null,medEid=null,iscEid=null,aU=null,aP=null;
+
+const TARIFFE={"Tessera Esterno":25,"Tessera Esterno Minore":20,"Tessera Iscritto Sindacato":20,"Familiari Iscritti Sindacato":20,"Minori Iscritti Sindacato":15,"Pensionati Esterno":20,"Pensionato Iscritto Sindacato":15,"Pacchetto Famiglia (4+ persone)":50};
+function updateTariffaPreview(){const t=document.getElementById('iTipo').value;document.getElementById('iTariffa').value=TARIFFE[t]||'';}
+
+async function api(m,p,b){const r=await fetch('/api'+p,{method:m,headers:{'Content-Type':'application/json','x-cass-user':aU,'x-cass-pass':aP},body:b?JSON.stringify(b):undefined});if(!r.ok)throw new Error(await r.text());return r.json();}
+
+function sta(s){if(!s)return'green';const t=new Date();t.setHours(0,0,0,0);const d=Math.floor((new Date(s)-t)/86400000);if(d<0)return'red';if(d<=GG)return'yellow';if(d<=GG2)return'orange';return'green';}
+function bdg(s){const m={green:['bg','● Regolare'],yellow:['by','● ≤45gg'],orange:['bo','● ≤60gg'],red:['br','● Scaduta']};return`<span class="badge ${m[s][0]}">${m[s][1]}</span>`;}
+
+async function doLogin(){
+  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  const btn=document.getElementById('lbtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Accesso…';
+  try{const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user:u,pass:p})});
+    if(!res.ok)throw new Error();const d=await res.json();aU=u;aP=p;
+    document.getElementById('loginWrap').style.display='none';document.getElementById('appWrap').style.display='block';
+    document.getElementById('navUser').textContent='👤 '+d.nome;
+    await Promise.all([loadAss(),loadMed(),loadIsc()]);
+  }catch{const e=document.getElementById('lerr');e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+  btn.disabled=false;btn.textContent='Accedi →';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('loginWrap').style.display!=='none')doLogin();});
+function doLogout(){aU=aP=null;assR=medR=iscR=[];document.getElementById('loginWrap').style.display='flex';document.getElementById('appWrap').style.display='none';}
+function switchTab(n,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));btn.classList.add('on');document.getElementById('sec-'+n).classList.add('on');}
+
+async function loadAss(){document.getElementById('tload-ass').style.display='block';try{assR=await api('GET','/associati');}catch{assR=[];}updateStats();renderAss();document.getElementById('tload-ass').style.display='none';}
+function updateStats(){const g=assR.filter(r=>sta(r.scadenza)==='green').length,y=assR.filter(r=>sta(r.scadenza)==='yellow').length,o=assR.filter(r=>sta(r.scadenza)==='orange').length,rd=assR.filter(r=>sta(r.scadenza)==='red').length;document.getElementById('sT').textContent=assR.length;document.getElementById('sG').textContent=g;document.getElementById('sY').textContent=y;document.getElementById('sO').textContent=o;document.getElementById('sR').textContent=rd;}
+function setF(f,btn){assF=f;document.querySelectorAll('#sec-associati .fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderAss();}
+function renderAss(){
+  const q=document.getElementById('search-ass').value.toLowerCase();
+  let rows=assR.filter(r=>{if(assF!=='all'&&sta(r.scadenza)!==assF)return false;if(!q)return true;return[r.nome,r.cognome,r.cf,r.tessera].some(v=>(v||'').toLowerCase().includes(q));});
+  const tb=document.getElementById('tbody-ass'),em=document.getElementById('empty-ass');
+  if(!rows.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
+  tb.innerHTML=rows.map(r=>{const s=sta(r.scadenza),sc=r.scadenza?new Date(r.scadenza).toLocaleDateString('it-IT'):'—';
+    return`<tr><td>${bdg(s)}</td><td><strong>${r.tessera||'—'}</strong></td><td>${r.nome}</td><td>${r.cognome}</td><td style="font-family:monospace;font-size:11px;">${r.cf||'—'}</td><td>${r.tel||'—'}</td><td>${r.asl||'—'}</td><td>${r.medico||'—'}</td><td>${sc}</td><td><button class="act" onclick="editAss('${r.id}')">✏️</button><button class="act" onclick="delAss('${r.id}')">🗑️</button></td></tr>`;
+  }).join('');
+}
+function openAssModal(id=null){assEid=id;document.getElementById('mtit-ass').textContent=id?'Modifica associato':'Nuovo associato';
+  const fs=['Nome','Cognome','CF','Tessera','Isc','Scad','Tel','Mail','Ind','ASL','Med','Note'];
+  if(id){const r=assR.find(x=>x.id===id);document.getElementById('fNome').value=r.nome||'';document.getElementById('fCognome').value=r.cognome||'';document.getElementById('fCF').value=r.cf||'';document.getElementById('fTessera').value=r.tessera||'';document.getElementById('fIsc').value=r.iscrizione||'';document.getElementById('fScad').value=r.scadenza||'';document.getElementById('fTel').value=r.tel||'';document.getElementById('fMail').value=r.mail||'';document.getElementById('fInd').value=r.indirizzo||'';document.getElementById('fASL').value=r.asl||'';document.getElementById('fMed').value=r.medico||'';document.getElementById('fNote').value=r.note||'';}
+  else{fs.forEach(f=>document.getElementById('f'+f).value='');}
+  document.getElementById('mbg-ass').classList.add('open');}
+function closeAssModal(){document.getElementById('mbg-ass').classList.remove('open');}
+function editAss(id){openAssModal(id);}
+async function delAss(id){if(!confirm('Eliminare?'))return;try{await api('DELETE',`/associati/${id}`);assR=assR.filter(r=>r.id!==id);updateStats();renderAss();showNf('✅ Eliminato','','warn');}catch{showNf('❌ Errore','','dng');}}
+async function saveAss(){
+  const nome=document.getElementById('fNome').value.trim(),cognome=document.getElementById('fCognome').value.trim();
+  if(!nome||!cognome){alert('Nome e Cognome obbligatori.');return;}
+  const btn=document.getElementById('saveAssBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Salvataggio…';
+  const data={nome,cognome,cf:document.getElementById('fCF').value.toUpperCase(),tessera:document.getElementById('fTessera').value,iscrizione:document.getElementById('fIsc').value,scadenza:document.getElementById('fScad').value,tel:document.getElementById('fTel').value,mail:document.getElementById('fMail').value,indirizzo:document.getElementById('fInd').value,asl:document.getElementById('fASL').value,medico:document.getElementById('fMed').value,note:document.getElementById('fNote').value};
+  try{if(assEid){const up=await api('PUT',`/associati/${assEid}`,data);const i=assR.findIndex(r=>r.id===assEid);assR[i]=up;}else{const cr=await api('POST','/associati',data);assR.push(cr);}closeAssModal();updateStats();renderAss();showNf('✅ Salvato','','warn');}catch{showNf('❌ Errore','','dng');}
+  btn.disabled=false;btn.textContent='Salva';
+}
+
+async function loadIsc(){document.getElementById('tload-isc').style.display='block';try{iscR=await api('GET','/iscrizioni');}catch{iscR=[];}updateIscStats();renderIsc();document.getElementById('tload-isc').style.display='none';}
+function updateIscStats(){const p=iscR.filter(r=>r.stato!=='Confermata').length,c=iscR.filter(r=>r.stato==='Confermata').length;document.getElementById('iT').textContent=iscR.length;document.getElementById('iP').textContent=p;document.getElementById('iC').textContent=c;}
+function setIF(f,btn){iscF=f;document.querySelectorAll('#sec-iscrizioni .fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderIsc();}
+function renderIsc(){
+  const q=document.getElementById('search-isc').value.toLowerCase();
+  let rows=iscR.filter(r=>{
+    if(iscF==='pending'&&r.stato==='Confermata')return false;
+    if(iscF==='confirmed'&&r.stato!=='Confermata')return false;
+    if(!q)return true;
+    return[r.nome,r.cognome,r.cf,r.tessera,r.tipo].some(v=>(v||'').toLowerCase().includes(q));
+  });
+  const tb=document.getElementById('tbody-isc'),em=document.getElementById('empty-isc');
+  if(!rows.length){tb.innerHTML='';em.style.display='block';return;}em.style.display='none';
+  tb.innerHTML=rows.map(r=>{
+    const confermata=r.stato==='Confermata';
+    const statoBadge=confermata?'<span class="badge bg">✅ Confermata</span>':'<span class="badge by">⏳ In attesa</span>';
+    const actionBtn=confermata
+      ? `<button class="act" onclick="editIsc('${r.id}')">✏️</button><button class="act" onclick="delIsc('${r.id}')">🗑️</button>`
+      : `<button class="btn-confirm" onclick="confirmIsc('${r.id}',this)">✅ Conferma e genera tessera</button> <button class="act" onclick="delIsc('${r.id}')">🗑️</button>`;
+    return`<tr><td>${statoBadge}</td><td><span class="badge-tipo">${r.tipo||'—'}</span></td><td><strong>${r.tessera||'—'}</strong></td><td>${r.cognome}</td><td>${r.nome}</td><td style="font-size:11.5px;">${r.email||'—'}</td><td>${r.telefono||'—'}</td><td style="font-weight:600;">€ ${r.tariffa||'0'}</td><td style="white-space:nowrap;">${actionBtn}</td></tr>`;
+  }).join('');
+}
+function openIscModal(id=null){iscEid=id;
+  if(id){const r=iscR.find(x=>x.id===id);document.getElementById('iTipo').value=r.tipo||'';document.getElementById('iCognome').value=r.cognome||'';document.getElementById('iNome').value=r.nome||'';document.getElementById('iNascita').value=r.nascita||'';document.getElementById('iCF').value=r.cf||'';document.getElementById('iEmail').value=r.email||'';document.getElementById('iTel').value=r.telefono||'';document.getElementById('iIndirizzo').value=r.indirizzo||'';document.getElementById('iTariffa').value=r.tariffa||'';document.getElementById('iPagamento').value=r.pagamento||'';document.getElementById('iNote').value=r.note||'';}
+  else{['iTipo','iCognome','iNome','iNascita','iCF','iEmail','iTel','iIndirizzo','iTariffa','iPagamento','iNote'].forEach(id=>document.getElementById(id).value='');}
+  document.getElementById('mbg-isc').classList.add('open');}
+function closeIscModal(){document.getElementById('mbg-isc').classList.remove('open');}
+function editIsc(id){openIscModal(id);}
+async function delIsc(id){if(!confirm('Eliminare?'))return;try{await api('DELETE',`/iscrizioni/${id}`);iscR=iscR.filter(r=>r.id!==id);updateIscStats();renderIsc();showNf('✅ Eliminata','','warn');}catch{showNf('❌ Errore','','dng');}}
+async function saveIsc(){
+  const cognome=document.getElementById('iCognome').value.trim(),nome=document.getElementById('iNome').value.trim();
+  if(!nome||!cognome){alert('Nome e Cognome obbligatori.');return;}
+  const btn=document.getElementById('saveIscBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Salvataggio…';
+  const data={tipo:document.getElementById('iTipo').value,cognome,nome,nascita:document.getElementById('iNascita').value,cf:document.getElementById('iCF').value.toUpperCase(),email:document.getElementById('iEmail').value,telefono:document.getElementById('iTel').value,indirizzo:document.getElementById('iIndirizzo').value,tariffa:document.getElementById('iTariffa').value,pagamento:document.getElementById('iPagamento').value,note:document.getElementById('iNote').value};
+  try{const cr=await api('POST','/iscrizioni',data);iscR.push(cr);closeIscModal();updateIscStats();renderIsc();showNf('✅ Salvata',`${cognome} ${nome} registrato/a come confermata.`,'warn');}catch{showNf('❌ Errore','','dng');}
+  btn.disabled=false;btn.textContent='Salva (già confermata)';
+}
+async function confirmIsc(id, btn){
+  if(!confirm('Confermare il pagamento e generare la tessera? Verrà inviata una email automatica.'))return;
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>Generazione…';
+  try{
+    const res=await api('POST',`/iscrizioni/${id}/confirm`);
+    iscR=await api('GET','/iscrizioni');
+    updateIscStats();renderIsc();
+    showNf('🎉 Tessera generata!',`N° ${res.tessera} — Email ${res.emailSent?'inviata':'NON inviata: '+(res.emailError||'errore sconosciuto')}`,res.emailSent?'warn':'dng');
+  }catch(e){showNf('❌ Errore',e.message,'dng');btn.disabled=false;btn.textContent='✅ Conferma e genera tessera';}
+}
+
+async function loadMed(){document.getElementById('tload-med').style.display='block';try{medR=await api('GET','/medici');}catch{medR=[];}renderMed();document.getElementById('tload-med').style.display='none';}
+function renderMed(){
+  const q=document.getElementById('search-med').value.toLowerCase();
+  const rows=medR.filter(r=>!q||[r.nome,r.cognome].some(v=>(v||'').toLowerCase().includes(q)));
+  const grid=document.getElementById('med-grid'),em=document.getElementById('empty-med');
+  if(!rows.length){grid.innerHTML='';em.style.display='block';return;}em.style.display='none';
+  grid.innerHTML=rows.map(r=>`<div class="med-card"><div class="med-actions"><button class="act" onclick="editMed('${r.id}')">✏️</button><button class="act" onclick="delMed('${r.id}')">🗑️</button></div><div class="med-name">Dr. ${r.nome} ${r.cognome}</div>${r.cellulare?`<div class="med-row">📱 ${r.cellulare}</div>`:''}${r.tel_studio?`<div class="med-row">📞 ${r.tel_studio}</div>`:''}${r.email?`<div class="med-row">📧 ${r.email}</div>`:''}${r.indirizzo?`<div class="med-row">📍 ${r.indirizzo}</div>`:''}${r.orari?`<div class="med-row" style="white-space:pre-line">🕐 ${r.orari}</div>`:''}</div>`).join('');
+}
+function openMedModal(id=null){medEid=id;
+  if(id){const r=medR.find(x=>x.id===id);document.getElementById('mNome').value=r.nome||'';document.getElementById('mCognome').value=r.cognome||'';document.getElementById('mEmail').value=r.email||'';document.getElementById('mCell').value=r.cellulare||'';document.getElementById('mTel').value=r.tel_studio||'';document.getElementById('mInd').value=r.indirizzo||'';document.getElementById('mOrari').value=r.orari||'';}
+  else{['mNome','mCognome','mEmail','mCell','mTel','mInd','mOrari'].forEach(id=>document.getElementById(id).value='');}
+  document.getElementById('mbg-med').classList.add('open');}
+function closeMedModal(){document.getElementById('mbg-med').classList.remove('open');}
+function editMed(id){openMedModal(id);}
+async function delMed(id){if(!confirm('Eliminare?'))return;try{await api('DELETE',`/medici/${id}`);medR=medR.filter(r=>r.id!==id);renderMed();showNf('✅ Eliminato','','warn');}catch{showNf('❌ Errore','','dng');}}
+async function saveMed(){
+  const nome=document.getElementById('mNome').value.trim(),cognome=document.getElementById('mCognome').value.trim();
+  if(!nome||!cognome){alert('Nome e Cognome obbligatori.');return;}
+  const btn=document.getElementById('saveMedBtn');btn.disabled=true;btn.innerHTML='<span class="spin"></span>Salvataggio…';
+  const data={nome,cognome,email:document.getElementById('mEmail').value,cellulare:document.getElementById('mCell').value,tel_studio:document.getElementById('mTel').value,indirizzo:document.getElementById('mInd').value,orari:document.getElementById('mOrari').value};
+  try{if(medEid){const up=await api('PUT',`/medici/${medEid}`,data);const i=medR.findIndex(r=>r.id===medEid);medR[i]=up;}else{const cr=await api('POST','/medici',data);medR.push(cr);}closeMedModal();renderMed();showNf('✅ Salvato','','warn');}catch{showNf('❌ Errore','','dng');}
+  btn.disabled=false;btn.textContent='Salva';
+}
+
+function openImport(){document.getElementById('ibg').classList.add('open');}
+function closeImport(){document.getElementById('ibg').classList.remove('open');document.getElementById('iprev').innerHTML='';}
+const drop=document.getElementById('drop');
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over');});
+drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');handleFile(e.dataTransfer.files[0]);});
+const cMap={'nome':'nome','cognome':'cognome','codice fiscale':'cf','cf':'cf','n° tessera':'tessera','tessera':'tessera','data iscrizione':'iscrizione','scadenza':'scadenza','telefono':'tel','tel':'tel','mail':'mail','email':'mail','indirizzo':'indirizzo','asl':'asl','medico di base':'medico','medico':'medico','note':'note'};
+async function handleFile(file){
+  if(!file)return;const prev=document.getElementById('iprev');prev.innerHTML='⏳ Analisi…';
+  try{const ab=await file.arrayBuffer(),wb=XLSX.read(ab),ws=wb.Sheets[wb.SheetNames[0]];
+    const data=XLSX.utils.sheet_to_json(ws,{defval:''});
+    const rows=data.map(row=>{const o={};Object.entries(row).forEach(([k,v])=>{const mk=cMap[k.trim().toLowerCase()];if(mk)o[mk]=String(v).trim();});return o;}).filter(r=>r.nome||r.cognome);
+    if(!rows.length){prev.innerHTML='<span style="color:var(--red)">❌ Nessun dato valido.</span>';return;}
+    const res=await api('POST','/associati/import',{records:rows});assR=await api('GET','/associati');updateStats();renderAss();
+    prev.innerHTML=`<span style="color:var(--green);font-weight:700;">✅ Importati ${res.imported} associati.</span>`;
+  }catch(e){prev.innerHTML=`<span style="color:var(--red)">❌ ${e.message}</span>`;}
+}
+
+function showNf(title,text,type){
+  const b=document.getElementById('nfb'),el=document.createElement('div');
+  el.className=`nf ${type}`;
+  el.innerHTML=`<div style="font-size:18px;flex-shrink:0;">${type==='dng'?'🚨':'⚠️'}</div><div class="nft"><strong>${title}</strong><span>${text}</span></div><button class="nfc" onclick="this.parentElement.remove()">✕</button>`;
+  b.appendChild(el);setTimeout(()=>el.remove(),10000);
+}
+</script>
+</body>
+</html>

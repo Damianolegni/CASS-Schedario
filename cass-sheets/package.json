@@ -1,0 +1,10 @@
+{
+  "name": "cass-schedario",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "google-auth-library": "^9.11.0",
+    "googleapis": "^140.0.1",
+    "pdf-lib": "^1.17.1"
+  }
+}
