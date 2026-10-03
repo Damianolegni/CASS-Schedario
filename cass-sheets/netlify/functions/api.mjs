@@ -130,6 +130,10 @@ export default async(req)=>{
           <p style="font-size:14px;color:#1A2B3C;">Ciao <strong>${nome}</strong>,</p>
           <p style="font-size:14px;color:#3A5070;line-height:1.6;">Abbiamo ricevuto la tua richiesta di iscrizione al CASS come <strong>${tipo}</strong>.</p>
           <div style="background:#fff;border-left:3px solid #028090;padding:14px 18px;margin:16px 0;border-radius:0 6px 6px 0;"><p style="margin:0;font-size:13px;color:#3A5070;">Importo da versare: <strong style="color:#0D2B5E;">€ ${tariffa},00</strong></p></div>
+          <div style="background:#fff;border:1px solid #D7E1EC;padding:14px 18px;margin:16px 0;border-radius:6px;">
+            <p style="margin:0 0 8px;font-size:13px;color:#0D2B5E;font-weight:700;">Coordinate bancarie per il versamento</p>
+            <p style="margin:0;font-size:13px;color:#3A5070;line-height:1.7;">IBAN: <strong style="color:#0D2B5E;">IT88K0306909606100000124995</strong><br>Intestatario: <strong style="color:#0D2B5E;">SALPAS FISAFS</strong><br>Causale: <strong style="color:#0D2B5E;">Quota associativa C.A.S.S.</strong></p>
+          </div>
           <p style="font-size:13px;color:#3A5070;line-height:1.6;">Una volta ricevuto il pagamento, ti invieremo via email la tessera associativa con il numero definitivo. Per informazioni: <a href="mailto:info@cassitalia.it">info@cassitalia.it</a>.</p>
           <p style="font-size:12px;color:#6B85A0;margin-top:20px;">CASS – Centro Assistenza Socio Sanitario | S.A.L.P.A.S.</p>
         </div></div>`,
